@@ -40,9 +40,9 @@ userInput={
 
 # Rakit df user 
 userInputList=[]
-dfUser=pd.DataFrame(columns=["check"],index=df.index)
+dfUser=pd.DataFrame(columns=["need"],index=df.index)
 for i in userInput: 
-    dfUser.loc[i, "check"]=userInput[i]
+    dfUser.loc[i, "need"]=userInput[i]
     userInputList.append(i)
 
 dfUser.fillna(0,inplace=True)
@@ -85,6 +85,8 @@ for i in combination2:
     total=df3.sum(axis=1,skipna=True)
     df3["total"]=total
     df3=pd.concat([df3,dfUser],axis=1,sort=False)
+    check= np.where(df3["total"] >= df3["need"], "Good", "Bad")
+    df3["check"]=check
     print(df3)
     #print(total)
     
