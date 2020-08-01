@@ -76,51 +76,60 @@ hold=0
 
 def fillCombo(position, number):
     global hold 
-    print(position, number, hold)
+    #print(position, number, hold)
     if position>=hold:
         combo[position]=number
         hold=position
     else: 
         combo[position]=number
         hold=position
-        for i in range(position+1,len(df.columns)):
-            combo[i]=0
+        combo[position+1:]=[0 for z in combo[position+1:]]
+        #for i in range(position+1,len(dfMod.columns)):
+            #combo[i]=0
 
 combo=[]
-for i in df.columns:
+for i in dfMod.columns:
     combo.append(0)
 
+hitung=0
+
 master=[]
-def asd(length, rep): 
-    repfixed=rep
-    def loops(length, rep, repfixed):
-        global dfMod, dfUser, master, combo, constraint
+def generate(rep): 
+    #repfixed=rep
+    def loops(rep):
+        global dfMod, dfUser, master, combo, constraint, repfixed, hitung
         if rep>= 1:
             for x in range(constraint[repfixed-rep]):
-                columnPosition=repfixed-rep
-                fillCombo(columnPosition, x)
+                #columnPosition=repfixed-rep
+                fillCombo(repfixed-rep, x)
                 #print(combo)
                 #print(columnPosition, x)
                 df3=dfMod.copy()
-                for i,j in enumerate(combo):
-                    df3.iloc[:,i]=df3.iloc[:,i]*combo[i]
+                #for i,j in enumerate(combo):
+                    #df3.iloc[:,i]=df3.iloc[:,i]*combo[i]
+                df3=df3*combo
                 total=df3.sum(axis=1,skipna=True)
                 df3["total"]=total
                 df3=pd.concat([df3,dfUser],axis=1,sort=False)
                 check= np.where(df3["total"] >= df3["need"], True, False)
-                df3["check"]=check
+                #df3["check"]=check
                 #print(df3)
-                a=df3["check"].all()
+                #a=df3["check"].all()
+                hitung+=1
+                a=check.all()
                                 #print(columnPosition, x)
                 if a: 
                     master.append(df3.loc["energy","total"])
                     #print(df3.loc["energy","total"])
                     #print("break")
                     break
-                loops(length, rep - 1,repfixed)
-    loops(length,rep, repfixed)
+                loops(rep - 1)
+    loops(rep)
 
-asd(6,len(dfMod.columns))
-
+logger.info("Start")
+repfixed=len(dfMod.columns)
+generate(repfixed)
+logger.info("End")
+print(hitung)
 
 

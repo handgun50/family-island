@@ -40,7 +40,7 @@ df.fillna(0,inplace=True)
 
 # Inputan dari user
 userInput={
-"grass":5
+"grass":5,
 "fir cones":5
 }
 
